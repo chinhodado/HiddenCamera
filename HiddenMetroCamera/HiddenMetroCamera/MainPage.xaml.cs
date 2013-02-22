@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -26,6 +27,7 @@ namespace HiddenMetroCamera
         private Windows.Storage.StorageFile m_photoStorageFile;
         private Windows.Storage.StorageFile m_recordStorageFile;
         private bool initialized = false;
+        private bool debug = true;//wanna debug? set the statusListBox to Visible
 
         public MainPage()
         {
@@ -41,7 +43,7 @@ namespace HiddenMetroCamera
         {
         }
 
-        internal async void initializeCamera()
+        internal async Task initializeCamera()
         {
             try
             {
@@ -49,13 +51,13 @@ namespace HiddenMetroCamera
                 {
 	                m_mediaCaptureMgr = new Windows.Media.Capture.MediaCapture();
 	                await m_mediaCaptureMgr.InitializeAsync();
-                    statusListBox.Items.Add("Device initialized successful");
+                    if (debug) statusListBox.Items.Add("Device initialized successful");                    
                     initialized = true;
                 }
             }
             catch (Exception exception)
             {
-                statusListBox.Items.Add("error initialize");
+                if (debug) statusListBox.Items.Add("error initialize");
             }
         }
 
@@ -63,16 +65,16 @@ namespace HiddenMetroCamera
         {
             try
             {
-                initializeCamera();
+                await initializeCamera();
                 string PHOTO_FILE_NAME = string.Format("img-{0:yyyy-MM-dd_hh-mm-ss-tt}.jpg", DateTime.Now);
                 m_photoStorageFile = await Windows.Storage.KnownFolders.PicturesLibrary.CreateFileAsync(PHOTO_FILE_NAME, Windows.Storage.CreationCollisionOption.GenerateUniqueName);
                 ImageEncodingProperties imageProperties = ImageEncodingProperties.CreateJpeg();
                 await m_mediaCaptureMgr.CapturePhotoToStorageFileAsync(imageProperties, m_photoStorageFile);
-                statusListBox.Items.Add(PHOTO_FILE_NAME + " saved");
+                if (debug) statusListBox.Items.Add(PHOTO_FILE_NAME + " saved");
             }
             catch (Exception exception)
             {
-                statusListBox.Items.Add("still initilizing...");
+                if (debug) statusListBox.Items.Add("error occurred");
             }
         }
     }
