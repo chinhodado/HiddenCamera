@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Windows.Foundation;
 using Windows.Media.MediaProperties;
+using GlobalHotkeys;
 
 namespace HiddenDesktopCamera
 {
@@ -18,10 +19,31 @@ namespace HiddenDesktopCamera
         private Windows.Storage.StorageFile m_photoStorageFile;
         private Windows.Storage.StorageFile m_recordStorageFile;
         private bool initialized = false;
+        private GlobalHotkey ghk;
 
         public Form1()
         {
             InitializeComponent();
+            Closing += Form1Closing; //dispose the ghk
+        }
+
+        //Dispose the GlobalHotKey
+        void Form1Closing(object sender, CancelEventArgs e)
+        {
+            ghk.Dispose();
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            var hotkeyInfo = HotkeyInfo.GetFromMessage(m);
+            if (hotkeyInfo != null) HotkeyProc(hotkeyInfo);
+            base.WndProc(ref m);
+        }
+
+        //callback for hotkey processing
+        private void HotkeyProc(HotkeyInfo hotkeyInfo)
+        {
+            statusListBox.Items.Add("Success!");
         }
 
         internal async void initializeCamera()
@@ -78,6 +100,28 @@ namespace HiddenDesktopCamera
             this.WindowState = FormWindowState.Normal;
             this.ShowInTaskbar = true;
             notifyIcon1.Visible = false;
+        }
+
+        //register the hotkeys when the form loads
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            if (ghk != null) ghk.Unregister();
+
+            var key = Keys.A;
+            var mod = Modifiers.Ctrl;
+
+            //if (altCheckBox.Checked) mod |= Modifiers.Alt;
+            //if (ctrlCheckBox.Checked) mod |= Modifiers.Ctrl;
+            //if (shiftCheckBox.Checked) mod |= Modifiers.Shift;
+            //if (winCheckBox.Checked) mod |= Modifiers.Win;
+            try
+            {
+                ghk = new GlobalHotkey(mod, key, this, true);
+            }
+            catch (GlobalHotkeyException exc)
+            {
+                MessageBox.Show(exc.Message);
+            }
         }
     }
 }

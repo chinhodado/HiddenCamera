@@ -88,6 +88,12 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Chin\Desktop\llh\GlobalHotkeys\GlobalHotkeys.csproj">
+      <Project>{4e8203f1-3eca-4845-a945-85ab31faf59b}</Project>
+      <Name>GlobalHotkeys</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
