@@ -58,5 +58,26 @@ namespace HiddenDesktopCamera
                 statusListBox.Items.Add("still initializing...");
             }
         }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                notifyIcon1.Visible = true;
+
+                //this is probably ignored anyway since it's too small, 
+                //and will be overrided by a minimum value by the OS
+                notifyIcon1.ShowBalloonTip(200);
+
+                this.ShowInTaskbar = false;
+            }
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.WindowState = FormWindowState.Normal;
+            this.ShowInTaskbar = true;
+            notifyIcon1.Visible = false;
+        }
     }
 }
