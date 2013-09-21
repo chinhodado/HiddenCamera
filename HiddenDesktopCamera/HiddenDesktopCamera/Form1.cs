@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Utilities;
 using Windows.Foundation;
 using Windows.Media.MediaProperties;
 
@@ -18,6 +19,7 @@ namespace HiddenDesktopCamera
         private Windows.Storage.StorageFile m_photoStorageFile;
         private Windows.Storage.StorageFile m_recordStorageFile;
         private bool initialized = false;
+        globalKeyboardHook gkh = new globalKeyboardHook();
 
         public Form1()
         {
@@ -79,5 +81,26 @@ namespace HiddenDesktopCamera
             this.ShowInTaskbar = true;
             notifyIcon1.Visible = false;
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            gkh.HookedKeys.Add(Keys.A);
+            gkh.HookedKeys.Add(Keys.PrintScreen);
+            //gkh.KeyDown += new KeyEventHandler(gkh_KeyDown);
+            gkh.KeyUp += new KeyEventHandler(gkh_KeyUp);
+        }
+
+        void gkh_KeyUp(object sender, KeyEventArgs e)
+        {
+            //statusListBox.Items.Add("Up\t" + e.KeyCode.ToString());
+            statusListBox.Items.Add("fired");
+            e.Handled = true;
+        }
+
+        //void gkh_KeyDown(object sender, KeyEventArgs e)
+        //{
+        //    statusListBox.Items.Add("Down\t" + e.KeyCode.ToString());
+        //    e.Handled = true;
+        //} 
     }
 }
