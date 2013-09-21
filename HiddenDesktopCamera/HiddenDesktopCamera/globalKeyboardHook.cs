@@ -101,7 +101,9 @@ namespace Utilities {
 					KeyEventArgs kea = new KeyEventArgs(key);
 					if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) && (KeyDown != null)) {
 						KeyDown(this, kea);
-					} else if ((wParam == WM_KEYUP || wParam == WM_SYSKEYUP) && (KeyUp != null)) { 
+
+                    //modified so that this only works when CTRL is pressed
+					} else if ((wParam == WM_KEYUP || wParam == WM_SYSKEYUP) && (KeyUp != null) && Keys.Control == Control.ModifierKeys) { 
 						KeyUp(this, kea);
 					}
 					if (kea.Handled)
