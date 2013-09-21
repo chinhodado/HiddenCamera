@@ -69,6 +69,7 @@
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.statusListBox);
             this.Controls.Add(this.startButton);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "HDC";
             this.Load += new System.EventHandler(this.Form1_Load);
