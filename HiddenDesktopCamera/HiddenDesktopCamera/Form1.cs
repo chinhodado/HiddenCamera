@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Utilities;
 using Windows.Foundation;
+using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 
 namespace HiddenDesktopCamera {
@@ -39,6 +41,7 @@ namespace HiddenDesktopCamera {
                 if (!initialized) {
                     m_mediaCaptureMgr = new Windows.Media.Capture.MediaCapture();
                     await m_mediaCaptureMgr.InitializeAsync();
+                    SetResolution();
                     statusListBox.Invoke(new MethodInvoker(() => statusListBox.Items.Add("Device initialized successful")));
                     initialized = true;
                 }
@@ -46,6 +49,31 @@ namespace HiddenDesktopCamera {
             catch (Exception exception) {
                 if (debug) statusListBox.Items.Add(exception);
                 else statusListBox.Invoke(new MethodInvoker(() => statusListBox.Items.Add("Error initializing camera")));
+            }
+        }
+
+        //set the maximum resolution supported
+        public async void SetResolution()
+        {
+            System.Collections.Generic.IReadOnlyList<IMediaEncodingProperties> res;
+            res = this.m_mediaCaptureMgr.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.VideoPreview);
+            uint maxResolution = 0;
+            int indexMaxResolution = 0;
+
+            if (res.Count >= 1)
+            {
+                for (int i = 0; i < res.Count; i++)
+                {
+                    VideoEncodingProperties vp = (VideoEncodingProperties)res[i];
+
+                    if (vp.Width > maxResolution)
+                    {
+                        indexMaxResolution = i;
+                        maxResolution = vp.Width;
+                        Debug.WriteLine("Resolution: " + vp.Width);
+                    }
+                }
+                await this.m_mediaCaptureMgr.VideoDeviceController.SetMediaStreamPropertiesAsync(MediaStreamType.VideoPreview, res[indexMaxResolution]);
             }
         }
 
